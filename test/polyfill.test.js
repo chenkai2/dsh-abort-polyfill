@@ -69,3 +69,20 @@ if (native) AbortSignal.any = native   // restore for the process
 console.log('')
 if (fail > 0) { console.error(`polyfill tests FAILED (${fail})`); process.exit(1) }
 console.log(`polyfill tests passed (${pass} checks, ran the shipped lib/client.js)`)
+
+// ---- dsh.client 清单校验（复刻 packages/client/modules 的 parseDshClient） ----
+// 少一个 platform 就会让 required 插件 client-modules 组合失败、整个 dsh web 起不来，
+// 所以把它钉死在测试里，避免再出现"装了插件导致服务起不来"。
+{
+  const pkg = JSON.parse(readFileSync(join(dir, '..', 'package.json'), 'utf8'))
+  const decl = (pkg.dsh || {}).client
+  const okArray = (v) => v === undefined || (Array.isArray(v) && v.every((i) => typeof i === 'string'))
+  check('dsh.client 是对象', decl && typeof decl === 'object' && !Array.isArray(decl))
+  check('dsh.client.platform 是字符串（必填，缺失即启动失败）', typeof (decl || {}).platform === 'string')
+  check('dsh.client.platform === "web"', (decl || {}).platform === 'web')
+  check('dsh.client.inject 是字符串数组', okArray((decl || {}).inject))
+  check('dsh.client.external 是字符串数组', okArray((decl || {}).external))
+  check('dsh.client.immediately 是布尔', (decl || {}).immediately === undefined || typeof decl.immediately === 'boolean')
+  check('dsh.bundle.patch 指向存在的文件', typeof ((pkg.dsh || {}).bundle || {}).patch === 'string')
+  check('声明了 immediately：确保 polyfill 先于 dsh-api-gateway 的 client 半执行', (decl || {}).immediately === true)
+}
