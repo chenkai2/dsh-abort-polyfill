@@ -1,0 +1,11 @@
+# dsh-abort-polyfill bundle patch
+#
+# `dsh plugin --profile web add dsh-abort-polyfill` reconciles dsh.profile.bundles
+# against installed packages; seeing `dsh.bundle.patch` it appends this bundle to
+# the stack, and the profile boot merges this file like any other patch layer.
+#
+# The row is client-only: lib/index.js is a no-op host half, lib/client.js installs
+# the AbortSignal.any polyfill when the browser module table is built.
+- insert:
+    - id: abort-polyfill
+      name: 'dsh-abort-polyfill'
