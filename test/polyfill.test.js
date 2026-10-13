@@ -24,7 +24,7 @@ const check = (name, cond, extra) => {
   else { fail += 1; console.log('  [FAIL] ' + name + (extra ? '  -> ' + extra : '')) }
 }
 
-check('client.js 注册了插件行', loaded && loaded.id === 'dsh-abort-polyfill')
+check('client.js 注册了插件行', loaded && loaded.id === '@chenkai114/dsh-abort-polyfill')
 check('factory 返回带 apply 的插件', typeof loaded.factory().apply === 'function')
 check('AbortSignal.any 已被安装', typeof AbortSignal.any === 'function')
 
