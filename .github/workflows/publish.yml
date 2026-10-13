@@ -36,6 +36,18 @@ jobs:
       - name: npm CLI 需支持 trusted publishing（≥ 11.5.1）
         run: npm install -g npm@latest
 
+      - name: 环境自检（node/npm 版本 + OIDC 是否可用）
+        run: |
+          node -v
+          echo "npm before: $(npm -v)"
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL 存在: $([ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] && echo yes || echo no)"
+          v="$(npm -v)"; maj="${v%%.*}"; rest="${v#*.}"; min="${rest%%.*}"
+          if [ "$maj" -lt 11 ] || { [ "$maj" -eq 11 ] && [ "$min" -lt 5 ]; }; then
+            echo "::error::npm $v 太旧：trusted publishing 需要 >= 11.5.1（下面的 npm install -g npm@latest 没生效？）"
+            exit 1
+          fi
+          echo "npm after: $(npm -v) ✓"
+
       - name: tag 与 package.json 版本必须一致
         run: |
           v="$(node -p "require('./package.json').version")"
