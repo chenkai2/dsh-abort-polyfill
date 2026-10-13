@@ -25,7 +25,7 @@ DSH 0.2.1 的浏览器端 RPC 客户端会用这个 API：
 ## 安装
 
 ```bash
-dsh plugin --profile web add @chenkai114/dsh-abort-polyfill
+dsh plugin --profile web add dsh-abort-polyfill
 # 然后硬刷新浏览器（Cmd/Ctrl+Shift+R）
 ```
 
