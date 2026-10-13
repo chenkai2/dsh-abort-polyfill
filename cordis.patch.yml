@@ -8,4 +8,4 @@
 # the AbortSignal.any polyfill when the browser module table is built.
 - insert:
     - id: abort-polyfill
-      name: 'dsh-abort-polyfill'
+      name: '@chenkai114/dsh-abort-polyfill'

@@ -1,12 +1,16 @@
 {
-  "name": "dsh-abort-polyfill",
+  "name": "@chenkai114/dsh-abort-polyfill",
   "version": "0.1.0",
   "description": "DSH client plugin: install AbortSignal.any before other client plugins load, for older WebKit (iOS < 17.4 / Safari < 17.4) where it is missing.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
-    ".": { "default": "./lib/index.js" },
-    "./client": { "default": "./lib/client.js" }
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    }
   },
   "files": [
     "lib/index.js",
@@ -15,13 +19,34 @@
     "README.md"
   ],
   "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" },
-    "client": { "inject": [] }
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": []
+    }
   },
-  "keywords": ["dsh", "deepseek-harness", "plugin", "polyfill", "AbortSignal", "ios", "webkit"],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "polyfill",
+    "AbortSignal",
+    "ios",
+    "webkit"
+  ],
   "license": "MIT",
-  "publishConfig": { "access": "public" },
-  "repository": { "type": "git", "url": "https://github.com/chenkai2/dsh-abort-polyfill.git" },
-  "engines": { "node": ">=18" },
-  "scripts": { "test": "node test/polyfill.test.js" }
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chenkai2/dsh-abort-polyfill.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node test/polyfill.test.js"
+  }
 }
