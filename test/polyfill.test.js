@@ -90,10 +90,10 @@ check('Set.prototype.union 已安装', typeof Set.prototype.union === 'function'
 }
 
 if (native) AbortSignal.any = native
-if (nativeWR) Promise.withResolvers = nativeWR
-if (nativeOG) Object.groupBy = nativeOG
-if (nativeMG) Map.groupBy = nativeMG
-if (nativeU) Set.prototype.union = nativeU
+try { if (nativeWR) Promise.withResolvers = nativeWR } catch (e) {}
+try { if (nativeOG) Object.groupBy = nativeOG } catch (e) {}
+try { if (nativeMG) Map.groupBy = nativeMG } catch (e) {}
+try { if (nativeU) Set.prototype.union = nativeU } catch (e) {}
 
 console.log('')
 if (fail > 0) { console.error(`polyfill tests FAILED (${fail})`); process.exit(1) }
