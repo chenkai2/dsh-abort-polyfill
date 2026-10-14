@@ -14,6 +14,11 @@ const fakeWindow = { __ModuleLoader__: { load(def) { loaded = def } } }
 // Simulate an old WebKit: no AbortSignal.any at all.
 const native = AbortSignal.any
 delete AbortSignal.any
+// 模拟 Safari 16：这批 17.4 的 API 也一概没有
+const nativeWR = Promise.withResolvers; delete Promise.withResolvers
+const nativeOG = Object.groupBy;        delete Object.groupBy
+const nativeMG = Map.groupBy;           delete Map.groupBy
+const nativeU = Set.prototype.union;    delete Set.prototype.union
 assert.equal(typeof AbortSignal.any, 'undefined', 'test setup: AbortSignal.any must be absent')
 
 new Function('window', source)(fakeWindow)   // installs the polyfill + registers the plugin
@@ -64,7 +69,31 @@ check('空列表不 abort', AbortSignal.any([]).aborted === false)
   check('重复 abort 不会重复派发', n <= 1)
 }
 
-if (native) AbortSignal.any = native   // restore for the process
+check('Promise.withResolvers 已安装', typeof Promise.withResolvers === 'function')
+{
+  const { promise, resolve, reject } = Promise.withResolvers()
+  resolve('v'); check('withResolvers 的 resolve 生效', await promise === 'v')
+  const r2 = Promise.withResolvers(); r2.reject(new Error('x'))
+  check('withResolvers 的 reject 生效', await r2.promise.then(() => false, (e) => e.message === 'x'))
+}
+check('Object.groupBy 已安装', typeof Object.groupBy === 'function')
+check('Map.groupBy 已安装', typeof Map.groupBy === 'function')
+check('Set.prototype.union 已安装', typeof Set.prototype.union === 'function')
+{
+  const g = Object.groupBy([1, 2, 3, 4], (n) => (n % 2 ? 'odd' : 'even'))
+  check('groupBy 分组正确', JSON.stringify(g.odd) === '[1,3]' && JSON.stringify(g.even) === '[2,4]', JSON.stringify(g))
+  const u = new Set([1, 2]).union(new Set([2, 3]))
+  check('union 结果正确', [...u].sort().join(',') === '1,2,3', [...u].join(','))
+  const i = new Set([1, 2]).intersection(new Set([2, 3]))
+  check('intersection 结果正确', [...i].join(',') === '2', [...i].join(','))
+  check('isSubsetOf 正确', new Set([1]).isSubsetOf(new Set([1, 2])) === true)
+}
+
+if (native) AbortSignal.any = native
+if (nativeWR) Promise.withResolvers = nativeWR
+if (nativeOG) Object.groupBy = nativeOG
+if (nativeMG) Map.groupBy = nativeMG
+if (nativeU) Set.prototype.union = nativeU
 
 console.log('')
 if (fail > 0) { console.error(`polyfill tests FAILED (${fail})`); process.exit(1) }

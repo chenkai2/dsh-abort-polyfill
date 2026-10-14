@@ -1,7 +1,7 @@
 {
   "name": "dsh-abort-polyfill",
-  "version": "0.1.1",
-  "description": "DSH client plugin: install AbortSignal.any before other client plugins load, for older WebKit (iOS < 17.4 / Safari < 17.4) where it is missing.",
+  "version": "0.1.2",
+  "description": "DSH client plugin: install AbortSignal.any, Promise.withResolvers and other Safari 17.4-era APIs before other client plugins load (older iOS WebKit).",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
