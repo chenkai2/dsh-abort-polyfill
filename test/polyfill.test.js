@@ -19,6 +19,10 @@ const nativeWR = Promise.withResolvers; delete Promise.withResolvers
 const nativeOG = Object.groupBy;        delete Object.groupBy
 const nativeMG = Map.groupBy;           delete Map.groupBy
 const nativeU = Set.prototype.union;    delete Set.prototype.union
+const nativeTS = Array.prototype.toSorted;   delete Array.prototype.toSorted
+const nativeTR = Array.prototype.toReversed; delete Array.prototype.toReversed
+const nativeW  = Array.prototype.with;       delete Array.prototype.with
+const nativeWF = String.prototype.isWellFormed; delete String.prototype.isWellFormed
 assert.equal(typeof AbortSignal.any, 'undefined', 'test setup: AbortSignal.any must be absent')
 
 new Function('window', source)(fakeWindow)   // installs the polyfill + registers the plugin
@@ -89,6 +93,24 @@ check('Set.prototype.union 已安装', typeof Set.prototype.union === 'function'
   check('isSubsetOf 正确', new Set([1]).isSubsetOf(new Set([1, 2])) === true)
 }
 
+check('Array.prototype.toSorted 已安装', typeof Array.prototype.toSorted === 'function')
+check('Array.prototype.toReversed 已安装', typeof Array.prototype.toReversed === 'function')
+check('Array.prototype.with 已安装', typeof Array.prototype.with === 'function')
+check('String.prototype.isWellFormed 已安装', typeof String.prototype.isWellFormed === 'function')
+{
+  const src = [3, 1, 2]
+  check('toSorted 结果正确（不改原数组）', src.toSorted().join(',') === '1,2,3' && src.join(',') === '3,1,2', src.toSorted().join(','))
+  check('toSorted 支持比较函数', [1, 3, 2].toSorted((a, b) => b - a).join(',') === '3,2,1')
+  check('toReversed 结果正确（不改原数组）', [1, 2, 3].toReversed().join(',') === '3,2,1')
+  check('with 支持负数索引', [1, 2, 3].with(-1, 9).join(',') === '1,2,9', [1, 2, 3].with(-1, 9).join(','))
+  check('isWellFormed 正常字符串为 true', 'abc'.isWellFormed() === true)
+  check('isWellFormed 孤立代理项为 false', '\uD800'.isWellFormed() === false)
+}
+
+try { if (nativeTS) Array.prototype.toSorted = nativeTS } catch (e) {}
+try { if (nativeTR) Array.prototype.toReversed = nativeTR } catch (e) {}
+try { if (nativeW) Array.prototype.with = nativeW } catch (e) {}
+try { if (nativeWF) String.prototype.isWellFormed = nativeWF } catch (e) {}
 if (native) AbortSignal.any = native
 try { if (nativeWR) Promise.withResolvers = nativeWR } catch (e) {}
 try { if (nativeOG) Object.groupBy = nativeOG } catch (e) {}
