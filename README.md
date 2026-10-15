@@ -32,35 +32,6 @@ dsh plugin --profile web add dsh-abort-polyfill
 验证：在设备上用 Safari 打开 DSH 页面，地址栏输入 `javascript:typeof AbortSignal.any` —— 返回 `function` 即可。
 （或者装之前先看一眼：返回 `undefined` 说明这台设备就是缺这个 API。）
 
-## 发布（Trusted Publishing / OIDC：不需要 npm token，也不需要 2FA）
-
-本仓库用 `.github/workflows/publish.yml` 发布。凭据来自 GitHub 的 OIDC 短期令牌，
-不再需要 `NPM_TOKEN`，也不会弹指纹 —— npm 侧那条「非 trusted publishing 的 token 将受限」
-的横幅因此与我们无关。
-
-**一次性设置（npm 侧，只做一次）**：本包页面 → **Settings → Trusted Publisher → GitHub Actions**：
-
-| 字段 | 值 |
-|---|---|
-| Organization/User | `chenkai2` |
-| Repository | `dsh-abort-polyfill` |
-| Workflow filename | `publish.yml` |
-| Environment | `npm-publish` |
-
-之后**不要**再配置 `NPM_TOKEN`（有 token 反而会走回受限的路径）。
-
-**发布流程**
-
-```bash
-# 1) 改版本（版本号必须与 tag 一致，workflow 里有闸门校验）
-npm version patch --no-git-tag-version    # 或手动改 package.json
-# 2) 提交并打 tag
-git commit -am "release: vX.Y.Z" && git tag vX.Y.Z && git push && git push --tags
-# 3) 在 GitHub 上为该 tag 发 Release（或用 Actions 页手动跑 publish，支持 dry_run）
-```
-
-⚠️ **首次发布**（包在 npm 上还不存在时）只能手动 `npm publish` —— Trusted Publisher 要先有包才能配。
-
 ## 局限
 
 - **只覆盖主线程**。Worker 有独立全局，页面里的 polyfill 够不着。
